@@ -1,0 +1,9 @@
+# action commit patch reason
+skip 016219d54c90 0064-arm64-dts-imx95-Correct-the-lpuart7-and-lpuart8-srci.patch Already applied (git am -3: No changes): c1d1347c9184 arm64: dts: imx95: correct the lpuart7 and lpuart8 srcid
+skip 2c988e1f9df0 0285-Input-atmel_mxt_ts-allow-reset-GPIO-to-sleep.patch Already applied (git am -3: No changes): e2ccb7079ac4 LF-14550: drivers: touchscreen: Fix kernel warning in atm
+skip cb7a1f5e2930 0466-mmc-core-SPI-mode-remove-cmd7.patch Already applied (git am -3: No changes): b1f6a011b301 mmc: core: SPI mode remove cmd7
+skip 99141fc03c22 0467-mmc-mmc_spi-multiple-block-read-remove-read-crc-ack.patch Already applied (git am -3: No changes): aeae1b3fc651 mmc: mmc_spi: multiple block read remove read crc ack
+refresh 2fad3c11066c 0476-PCI-ERR-Fix-uevent-on-failure-to-recover.patch Context changed by NXP; merged by git 3-way
+skip 1a1f50bdd8de 0060-cpufreq-scmi-Account-for-malformed-DT-in-scmi_dev_us.patch Not applicable: scmi_dev_used_by_cpus() does not exist in the NXP tree. NXP removed it and its caller when merging v6.12.44 (1d32f850167e); this fix only adds a Broadcom STB case inside that function.
+adapt f0b75b4caaaf 0604-media-nxp-imx8-isi-Drop-unused-argument-to-mxc_isi_c.patch NXP still uses bypass to decide whether to chain (extra '&& !bypass' / '&& !pipe->bypass' conditions), so keep NXP's streamon/acquire code and only drop the unused second argument of mxc_isi_channel_chain(), including NXP's own caller in mxc_isi_m2m_resume().
+adapt e8b5f4d80775 0605-media-nxp-imx8-isi-m2m-Fix-streaming-cleanup-on-rele.patch Conflicts with NXP's streamon(), which skips buffer chaining in bypass mode ('&& !bypass'). Take upstream's move to vb2 .prepare_streaming/.unprepare_streaming and the generic v4l2_m2m streamon/streamoff, and keep NXP's bypass check in mxc_isi_m2m_vb2_prepare_streaming() (bypass computed for every user, chain only when not bypassing).
