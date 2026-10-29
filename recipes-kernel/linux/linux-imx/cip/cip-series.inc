@@ -5,5 +5,6 @@ CIP_BATCHES = " \
     v6.12.57-cip13 \
     v6.12.59-cip14 \
     v6.12.63-cip15 \
+    v6.12.66-cip16 \
 "
-LINUX_VERSION:ecu150v2 = "6.12.63"
+LINUX_VERSION:ecu150v2 = "6.12.66"

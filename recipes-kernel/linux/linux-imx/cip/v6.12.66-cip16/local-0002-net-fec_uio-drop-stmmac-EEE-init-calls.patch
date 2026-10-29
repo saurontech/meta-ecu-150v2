@@ -1,0 +1,52 @@
+From 0413a8782ea8b2b18de8cce903100da1cb22a3d4 Mon Sep 17 00:00:00 2001
+From: "suricata.lu" <suricata.lu@gmail.com>
+Date: Thu, 29 Oct 2026 10:50:34 +0800
+Subject: [PATCH] net: fec_uio: drop stmmac EEE init calls
+
+CIP v6.12.66-cip16 backports the stmmac EEE rework from stable:
+88063b6cbf06 ("net: stmmac: move tx_lpi_timer tracking to phylib")
+makes stmmac_eee_init() static and 84130a317cbb ("net: stmmac: remove
+priv->tx_lpi_enabled") removes tx_lpi_enabled. The NXP-only fec_uio
+driver has its own copy of stmmac's mac_link_down() and mac_link_up()
+that still uses both, so it no longer builds.
+
+Do what NXP lf-6.18.y does in fec_uio: when the hardware supports EEE,
+only tell the MAC the PHY link state with stmmac_set_eee_pls(), and do
+not initialise EEE in the UIO driver.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ drivers/net/ethernet/freescale/fec_uio.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/net/ethernet/freescale/fec_uio.c b/drivers/net/ethernet/freescale/fec_uio.c
+index 6e1a3a61e8f0..16e427fdf8d7 100644
+--- a/drivers/net/ethernet/freescale/fec_uio.c
++++ b/drivers/net/ethernet/freescale/fec_uio.c
+@@ -291,10 +291,8 @@ static void stmmac_mac_link_down(struct phylink_config *config,
+ 	struct stmmac_priv *priv = netdev_priv(to_net_dev(config->dev));
+ 
+ 	stmmac_mac_set(priv, priv->ioaddr, false);
+-	priv->eee_active = false;
+-	priv->tx_lpi_enabled = false;
+-	priv->eee_enabled = stmmac_eee_init(priv);
+-	stmmac_set_eee_pls(priv, priv->hw, false);
++	if (priv->dma_cap.eee)
++		stmmac_set_eee_pls(priv, priv->hw, false);
+ 
+ 	if (priv->dma_cap.fpesel)
+ 		stmmac_fpe_link_state_handle(priv, false);
+@@ -396,12 +394,8 @@ static void stmmac_mac_link_up(struct phylink_config *config,
+ 	writel(ctrl, priv->ioaddr + MAC_CTRL_REG);
+ 
+ 	stmmac_mac_set(priv, priv->ioaddr, true);
+-	if (phy && priv->dma_cap.eee) {
+-		priv->eee_active = phy_init_eee(phy, 0) >= 0;
+-		priv->eee_enabled = stmmac_eee_init(priv);
+-		priv->tx_lpi_enabled = priv->eee_enabled;
++	if (priv->dma_cap.eee)
+ 		stmmac_set_eee_pls(priv, priv->hw, true);
+-	}
+ 
+ 	if (priv->dma_cap.fpesel)
+ 		stmmac_fpe_link_state_handle(priv, true);
