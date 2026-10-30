@@ -1,0 +1,3 @@
+# action commit patch reason
+refresh cca96fd4837f 0172-mtd-spi-nor-macronix-Add-post_sfdp-fixups-for-Quad-I.patch Context changed by NXP; merged by git 3-way
+adapt a3c7f9470ecf 0236-Documentation-ioctl-number-Extend-Include-File-colum.patch Documentation only: NXP marks the 'K' kd.h row as conflict! and adds a 'K' 00-01 linux/caam_keygen.h row (caam driver) in the same part of the table. Take the upstream re-aligned table and re-add NXP's two rows with the new column width, exactly as in NXP lf-6.18.y.
