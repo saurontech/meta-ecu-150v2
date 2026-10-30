@@ -1,0 +1,2 @@
+# action commit patch reason
+adapt 2ea575b954fd 0108-net-phylink-put-link_gpio-if-phylink_create-fails.patch Context conflict only: NXP (like NXP lf-6.18.y) has an extra else-if branch for MLO_AN_PHY right after the fixed-link parsing in phylink_create(). Use the upstream goto release_link_gpio for the fixed-link error and keep NXP's branch; the other hunks are taken unchanged.
