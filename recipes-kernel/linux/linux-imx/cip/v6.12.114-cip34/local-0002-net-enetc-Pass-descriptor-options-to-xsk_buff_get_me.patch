@@ -1,0 +1,45 @@
+From 0237931e3b4480cf3453e98a916ed4f576d512a0 Mon Sep 17 00:00:00 2001
+From: "suricata.lu" <suricata.lu@gmail.com>
+Date: Sat, 31 Oct 2026 19:23:33 +0800
+Subject: [PATCH] net: enetc: Pass descriptor options to
+ xsk_buff_get_metadata()
+
+Patch 1094 in this folder, the stable backport of upstream commit
+a6e4b9a6deb9 ("xsk: honor XDP_TX_METADATA in zero-copy path"), adds an
+options argument to xsk_buff_get_metadata(), so that TX metadata is used
+only when the descriptor sets XDP_TX_METADATA. It converts igc, mlx5 and
+stmmac, but enetc gets its XSK TX metadata support from the NXP kernel
+(93712d49a877 "LF-14857-13 net: enetc: add Tx timestamp to XDP zero copy
+mode"), so it is not converted and no longer builds:
+
+  error: too few arguments to function 'xsk_buff_get_metadata'
+
+Pass the descriptor options as the other drivers do. When the option is
+not set, the helper returns NULL and enetc already skips the metadata
+request. Unlike mlx5 and stmmac, the completion data needs no extra
+reset: enetc_clean_tx_ring() clears each tx_swbd after completion, so
+tx_swbd->xsk_meta.tx_timestamp stays NULL for a descriptor without
+metadata.
+
+NXP lf-6.18.y still has the old helper, because upstream 6.18 does not
+have this change.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ drivers/net/ethernet/freescale/enetc/enetc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc.c b/drivers/net/ethernet/freescale/enetc/enetc.c
+index 8c89f53464ad..9a91a5f6b678 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc.c
++++ b/drivers/net/ethernet/freescale/enetc/enetc.c
+@@ -2769,7 +2769,8 @@ static void enetc_xsk_descs_to_tx_ring(struct enetc_bdr *tx_ring,
+ 			first_txbd = txbd;
+ 			frm_len = tx_swbd->len;
+ 
+-			meta = xsk_buff_get_metadata(pool, xsk_descs[j].addr);
++			meta = xsk_buff_get_metadata(pool, xsk_descs[j].addr,
++						     xsk_descs[j].options);
+ 			if (!meta)
+ 				goto no_metadata_req;
+ 
