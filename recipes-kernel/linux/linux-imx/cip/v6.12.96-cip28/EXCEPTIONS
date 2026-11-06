@@ -1,0 +1,4 @@
+# action commit patch reason
+refresh 9bcb59a45302 0130-PCI-imx6-Fix-IMX6SX_GPR12_PCIE_TEST_POWERDOWN-handli.patch Context changed by NXP; merged by git 3-way
+adapt cea7302d5d05 0296-crypto-caam-use-print_hex_dump_devel-to-guard-key-he.patch NXP's skcipher_setkey() handles tagged keys at this place and prints the input key a few lines later, after that block. Keep NXP's code and switch NXP's print_hex_dump_debug() of the input key to print_hex_dump_devel() as well, which is the same call this patch converts; the other hunks are taken unchanged.
+local - local-0001-PCI-imx6-drop-enable_ref_clk-from-NXP-s-IMX6SX_EP-dr.patch Build fix: 0130 (refresh) removes imx6sx_pcie_enable_ref_clk() and its use in drvdata[IMX6SX], but NXP's drvdata[IMX6SX_EP] (c372f1464bb5) still uses it, so pci-imx6.c no longer builds. Drop .enable_ref_clk from drvdata[IMX6SX_EP] as NXP lf-6.18.y does.

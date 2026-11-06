@@ -1,0 +1,7 @@
+# action commit patch reason
+refresh 3f185e069d5c 0011-arm64-defconfig-Enable-RZ-T2H-RZ-N2H-ADC-driver.patch Context changed by NXP; merged by git 3-way
+refresh fd5614763805 0227-xsk-Get-rid-of-xdp_buff_xsk-xskb_list_node.patch Context changed by NXP; merged by git 3-way
+refresh bf56bae0e5ec 0228-xsk-s-free_list_node-list_node.patch Context changed by NXP; merged by git 3-way
+adapt dcba62d4fade 0275-net-stmmac-Fix-error-handling-in-VLAN-add-and-delete.patch NXP's stmmac_vlan_rx_kill_vid() starts the PHY temporarily when it is not started before deleting the HW VLAN filter. Keep that branch and take the upstream error handling after it (restore active_vlans and call stmmac_vlan_update() again on failure).
+skip a0563931c028 0794-mtd-spi-nor-core-avoid-odd-length-address-reads-on-8.patch Equivalent change exists: 99998c840050 LF-15787-1 (same author, Pratyush Yadav) already adds spi_nor_octal_dtr_read() and calls it for SNOR_PROTO_8_8_8_DTR to avoid odd length/address reads in 8D-8D-8D mode. NXP's version only has an extra WARN_ON(ret < 0) check.
+skip 246bbe3ee76f 0795-mtd-spi-nor-core-avoid-odd-length-address-writes-in-.patch Equivalent change exists: 72409a203c0a LF-15787-2 (same author, Pratyush Yadav) already adds spi_nor_octal_dtr_write() and calls it for SNOR_PROTO_8_8_8_DTR to avoid odd length/address writes in 8D-8D-8D mode. NXP's version only has an extra WARN_ON(ret < 0) check.

@@ -1,0 +1,6 @@
+# action commit patch reason
+skip a54ea3a0182e 0414-driver-core-Add-device-probe-log-helper-dev_warn_pro.patch Already applied (git am -3: No changes): cbae3e8f0498 driver core: Add device probe log helper dev_warn_probe()
+skip 325ee501c55b 0554-dmaengine-Add-devm_dma_request_chan.patch Already applied (git am -3: No changes): 7cba42961675 dmaengine: Add devm_dma_request_chan()
+skip 9c28116133ef 0740-netmem-add-a-couple-of-page-helper-wrappers.patch Already applied (git am -3: No changes): 2dabb502d8d4 netmem: add a couple of page helper wrappers
+skip 14b23e58ad7f 0769-phy-renesas-rcar-gen3-usb2-Avoid-long-delay-in-atomi.patch Not applicable as is: CIP resolved the conflict of this stable patch with its own Renesas backports by hand in merge 46092fe4c55b (Merge tag 'v6.12.112' into linux-6.12.y-cip); cip-replay.sh stops here on plain CIP too. The local patch in this folder brings phy-rcar-gen3-usb2.c to CIP's result (NXP does not modify this file).
+local - local-0001-Sync-Renesas-R-Car-Gen3-USB2-PHY-driver-with-v6.12.1.patch Sync phy-rcar-gen3-usb2.c to v6.12.112-cip33: CIP resolved it by hand in merge 46092fe4c55b, which is not in any patch, so 0769 is skipped and this patch brings the file to CIP's result. NXP does not modify this file. Not built for ECU.

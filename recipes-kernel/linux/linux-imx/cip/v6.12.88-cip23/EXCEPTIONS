@@ -1,0 +1,2 @@
+# action commit patch reason
+skip 271c969f0118 0331-clk-imx-imx8-acm-fix-flags-for-acm-clocks.patch Equivalent change exists: NXP already passes CLK_SET_RATE_NO_REPARENT to devm_clk_hw_register_mux_parent_data_table() for the ACM clocks (e8d8e2b3dbca LF-15021-1: clk: imx: imx8-acm: set CLK_SET_RATE_NO_REPARENT flag, same author); only the line wrapping differs.

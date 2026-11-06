@@ -1,0 +1,47 @@
+From fc8e5322bebae902cdf39f26125661e4ec47d942 Mon Sep 17 00:00:00 2001
+From: "suricata.lu" <suricata.lu@gmail.com>
+Date: Tue, 3 Nov 2026 14:50:36 +0800
+Subject: [PATCH] tools/virtio: Make compiler-context-analysis.h visible to the
+ tools build
+
+Patch 0622 in the v6.12.112-cip33 folder, the stable backport of upstream
+commit de15fecae44d ("compiler_types: Move lock checking attributes to
+compiler-context-analysis.h"), makes include/linux/compiler_types.h
+include <linux/compiler-context-analysis.h>. tools/virtio uses the
+kernel's compiler_types.h directly (see tools/virtio/linux/compiler.h),
+but the new header is not in its include path, so the tools no longer
+build:
+
+  fatal error: linux/compiler-context-analysis.h: No such file or directory
+
+The kernel-tools recipe in meta-imx builds virtio-ivshmem-console and
+virtio-ivshmem-block from tools/virtio, so the image build fails.
+
+Add tools/virtio/linux/compiler-context-analysis.h that includes the
+kernel's header, in the same way tools/virtio/linux/compiler.h includes
+compiler_types.h. The macros get the same definitions as before 0622.
+
+Upstream fixed the tools build differently in 944e3f7562c5 ("tools:
+Update context analysis macros in compiler_types.h"), which adds a stub
+header to tools/include and removes the old macros from
+tools/include/linux/compiler_types.h. That change is not in 6.12 stable.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ tools/virtio/linux/compiler-context-analysis.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
+ create mode 100644 tools/virtio/linux/compiler-context-analysis.h
+
+diff --git a/tools/virtio/linux/compiler-context-analysis.h b/tools/virtio/linux/compiler-context-analysis.h
+new file mode 100644
+index 000000000000..8a49abf38fb7
+--- /dev/null
++++ b/tools/virtio/linux/compiler-context-analysis.h
+@@ -0,0 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef LINUX_COMPILER_CONTEXT_ANALYSIS_H
++#define LINUX_COMPILER_CONTEXT_ANALYSIS_H
++
++#include "../../../include/linux/compiler-context-analysis.h"
++
++#endif

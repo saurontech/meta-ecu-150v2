@@ -1,0 +1,64 @@
+From 585e2a2308c2bcf444987857831a1e561825435e Mon Sep 17 00:00:00 2001
+From: "suricata.lu" <suricata.lu@gmail.com>
+Date: Sat, 31 Oct 2026 18:43:43 +0800
+Subject: [PATCH] pmdomain: imx: scu-pd: Convert to the new syscore API
+
+v6.12.114-cip34 includes the stable backport of upstream commit
+a97fbc3ee3e2 ("syscore: Pass context data to callbacks"). The syscore
+callbacks now take a void *data argument, the list node moves from
+struct syscore_ops into a new struct syscore, and register_syscore_ops()
+is replaced by register_syscore(). That patch converts all users in the
+upstream tree, but scu-pd.c registers syscore ops only in the NXP kernel
+(810c265f0d61 "firmware: imx: scu-pd: Add IRQSTEER wakeup support"), so
+it is left on the old API and no longer builds.
+
+Convert it in the same way as the other drivers: the suspend callback
+takes void *data, the ops become const, and a struct syscore is
+registered. No functional change.
+
+NXP lf-6.18.y still uses the old API, because upstream 6.18 does not
+have this change.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ drivers/pmdomain/imx/scu-pd.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/pmdomain/imx/scu-pd.c b/drivers/pmdomain/imx/scu-pd.c
+index 9747542aa327..1b5459bf1958 100644
+--- a/drivers/pmdomain/imx/scu-pd.c
++++ b/drivers/pmdomain/imx/scu-pd.c
+@@ -319,7 +319,7 @@ to_imx_sc_pd(struct generic_pm_domain *genpd)
+ 	return container_of(genpd, struct imx_sc_pm_domain, pd);
+ }
+ 
+-static int imx_pm_domains_suspend(void)
++static int imx_pm_domains_suspend(void *data)
+ {
+ 	struct arm_smccc_res res;
+ 
+@@ -330,10 +330,14 @@ static int imx_pm_domains_suspend(void)
+ 	return 0;
+ }
+ 
+-struct syscore_ops imx_pm_domains_syscore_ops = {
++static const struct syscore_ops imx_pm_domains_syscore_ops = {
+ 	.suspend = imx_pm_domains_suspend,
+ };
+ 
++static struct syscore imx_pm_domains_syscore = {
++	.ops = &imx_pm_domains_syscore_ops,
++};
++
+ static void imx_sc_pd_get_console_rsrc(void)
+ {
+ 	struct of_phandle_args specs;
+@@ -569,7 +573,7 @@ static int imx_sc_pd_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 
+ 	imx_sc_pd_get_console_rsrc();
+-	register_syscore_ops(&imx_pm_domains_syscore_ops);
++	register_syscore(&imx_pm_domains_syscore);
+ 
+ 	return imx_scu_init_pm_domains(&pdev->dev, pd_soc);
+ }

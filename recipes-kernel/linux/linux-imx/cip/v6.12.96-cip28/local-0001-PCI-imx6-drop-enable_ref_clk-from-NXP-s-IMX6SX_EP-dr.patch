@@ -1,0 +1,35 @@
+From ad7dd375d0124a56368017338cda62f20791d5c3 Mon Sep 17 00:00:00 2001
+From: "suricata.lu" <suricata.lu@gmail.com>
+Date: Fri, 30 Oct 2026 14:25:19 +0800
+Subject: [PATCH] PCI: imx6: drop enable_ref_clk from NXP's IMX6SX_EP drvdata
+
+Patch 0130 in this folder, aad953fb4eed ("PCI: imx6: Fix
+IMX6SX_GPR12_PCIE_TEST_POWERDOWN handling"), removes
+imx6sx_pcie_enable_ref_clk() and its use in drvdata[IMX6SX]. NXP's
+endpoint entry drvdata[IMX6SX_EP], added in c372f1464bb5 ("PCI: imx6:
+Add PCIe EP support on 32bit i.MX platforms"), uses the same callback,
+so the driver no longer builds:
+
+  error: 'imx6sx_pcie_enable_ref_clk' undeclared
+
+Drop .enable_ref_clk from drvdata[IMX6SX_EP] as well, as NXP lf-6.18.y
+does. The TEST_POWERDOWN bit is now handled in imx6sx_pcie_core_reset(),
+which the EP entry already uses.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ drivers/pci/controller/dwc/pci-imx6.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+index abbc7e4731eb..3d88a4f1f089 100644
+--- a/drivers/pci/controller/dwc/pci-imx6.c
++++ b/drivers/pci/controller/dwc/pci-imx6.c
+@@ -2233,7 +2233,6 @@ static const struct imx_pcie_drvdata drvdata[] = {
+ 		.mode_mask[0] = IMX6Q_GPR12_DEVICE_TYPE,
+ 		.epc_features = &imx6q_pcie_epc_features,
+ 		.init_phy = imx6sx_pcie_init_phy,
+-		.enable_ref_clk = imx6sx_pcie_enable_ref_clk,
+ 		.core_reset = imx6sx_pcie_core_reset,
+ 	},
+ 	[IMX6QP_EP] = {

@@ -1,4 +1,4 @@
-From 3c48dcbc04284d1afc0e168a76ae76ca5e8ba758 Mon Sep 17 00:00:00 2001
+From 6bcfb069781c1567847f4359578bbb54c91996d8 Mon Sep 17 00:00:00 2001
 From: "suricata.lu" <suricata.lu@gmail.com>
 Date: Mon, 20 Apr 2026 15:02:40 +0800
 Subject: [PATCH] Port ECU-150v2 to linux-imx 6.12 on deviceTree and defconfig
@@ -11,7 +11,7 @@ Upstream-Status: Inappropriate [embedded board port]
  3 files changed, 247 insertions(+), 608 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
-index 26435ca5e171..827bdfa24a9e 100644
+index 820b83f6c8a0..827bdfa24a9e 100644
 --- a/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
 +++ b/arch/arm64/boot/dts/freescale/imx8mp-evk.dts
 @@ -10,9 +10,18 @@
@@ -886,7 +886,7 @@ index 26435ca5e171..827bdfa24a9e 100644
 -
 -	pinctrl_pcie0_reg: pcie0reggrp {
 -		fsl,pins = <
--			MX8MP_IOMUXC_SD1_DATA4__GPIO2_IO06	0x40
+-			MX8MP_IOMUXC_SD1_DATA4__GPIO2_IO06	0x140
 -		>;
 -	};
 -
@@ -1115,11 +1115,11 @@ index 26435ca5e171..827bdfa24a9e 100644
 -	};
 -};
 diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-index 97f186ef4838..b46c4deff3b7 100644
+index 20b95897f054..5822cecac94e 100644
 --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
 +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
 @@ -378,13 +378,13 @@ cpu-thermal {
- 			thermal-sensors = <&tmu 0>;
+ 			thermal-sensors = <&tmu 1>;
  			trips {
  				cpu_alert0: trip0 {
 -					temperature = <85000>;
@@ -1135,7 +1135,7 @@ index 97f186ef4838..b46c4deff3b7 100644
  					type = "critical";
  				};
 @@ -409,13 +409,13 @@ soc-thermal {
- 			thermal-sensors = <&tmu 1>;
+ 			thermal-sensors = <&tmu 0>;
  			trips {
  				soc_alert0: trip0 {
 -					temperature = <85000>;
@@ -1198,6 +1198,3 @@ index 0e9e6dfe63d0..7cc0f7ea0af3 100644
 +CONFIG_ADVMSP430_WATCHDOG=y
 +CONFIG_TCG_TIS_I2C=y
 +
--- 
-2.43.0
-
