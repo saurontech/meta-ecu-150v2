@@ -5,6 +5,12 @@ SRC_URI:append:ecu150v2 = " ${@' '.join('file://cip/%s/' % b for b in d.getVar('
 do_patch:prepend:ecu150v2() {
     cd ${S}
     check_git_config
+    # Disable automatic gc in the kernel source repo. Tens of thousands of CIP
+    # commits leave many loose objects, and the plain "git am" that kgit-s2q
+    # uses for the SRC_URI patches would then start a background gc, which
+    # holds HEAD.lock while the next patch is being committed.
+    git config gc.auto 0
+    git config maintenance.auto false
     if [ "${KERNEL_DEBUG_TIMESTAMPS}" != "1" ]; then
         reproducible_git_committer_author
     fi

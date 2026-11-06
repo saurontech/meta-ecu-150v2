@@ -1,0 +1,59 @@
+From f200251eb27f3d0058b518d23d28ded5bb27132f Mon Sep 17 00:00:00 2001
+From: "suricata.lu" <suricata.lu@gmail.com>
+Date: Tue, 3 Nov 2026 17:16:08 +0800
+Subject: [PATCH] mlinux: Use the new set_monitor_channel prototype from
+ 6.12.101
+
+Linux 6.13 added a struct net_device argument to
+cfg80211_ops.set_monitor_channel (upstream 9c4f830927750a2bf9fd9426a5257f0fdce3b662,
+"wifi: cfg80211: pass net_device to .set_monitor_channel"). The driver
+selects the new prototype only when CFG80211_VERSION_CODE is 6.13.0 or
+later.
+
+The 6.12 stable series backported that change in v6.12.101, as a
+dependency of 2b0eab425e1f ("wifi: cfg80211: convert pmsr_free_wk to
+wiphy_work to fix deadlock"). CIP kernels from v6.12.101-cip29 on have
+the new prototype, and the driver no longer builds:
+
+  moal_sta_cfg80211.c:524:32: error: initialization of
+  'int (*)(struct wiphy *, struct net_device *, struct cfg80211_chan_def *)'
+  from incompatible pointer type
+  'int (*)(struct wiphy *, struct cfg80211_chan_def *)'
+  [-Wincompatible-pointer-types]
+
+Select the new prototype from 6.12.101. Kernels 6.12.0 to 6.12.100,
+including NXP linux-imx 6.12.49 without CIP, keep the old prototype.
+The function does not use the new argument.
+
+Upstream-Status: Pending
+---
+ mlinux/moal_sta_cfg80211.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/mlinux/moal_sta_cfg80211.c b/mlinux/moal_sta_cfg80211.c
+index 21092c2..dbe0f99 100644
+--- a/mlinux/moal_sta_cfg80211.c
++++ b/mlinux/moal_sta_cfg80211.c
+@@ -127,7 +127,8 @@ rmp_table_t rmp_table_sta_6G[] = {
+ #ifdef UAP_SUPPORT
+ #if CFG80211_VERSION_CODE >= KERNEL_VERSION(3, 8, 0)
+ static int woal_cfg80211_set_monitor_channel(struct wiphy *wiphy,
+-#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 13, 0)
++/* 6.12.101 stable backported the 6.13 net_device argument */
++#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 12, 101)
+ 					     struct net_device *dev,
+ #endif
+ 					     struct cfg80211_chan_def *chandef);
+@@ -699,7 +700,8 @@ static const struct wiphy_coalesce_support coalesce_support = {
+ #ifdef UAP_SUPPORT
+ #if CFG80211_VERSION_CODE >= KERNEL_VERSION(3, 8, 0)
+ static int woal_cfg80211_set_monitor_channel(struct wiphy *wiphy,
+-#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 13, 0)
++/* 6.12.101 stable backported the 6.13 net_device argument */
++#if CFG80211_VERSION_CODE >= KERNEL_VERSION(6, 12, 101)
+ 					     struct net_device *dev,
+ #endif
+ 					     struct cfg80211_chan_def *chandef)
+-- 
+2.43.0
+

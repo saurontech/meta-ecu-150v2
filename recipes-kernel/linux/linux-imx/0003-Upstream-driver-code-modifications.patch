@@ -1,4 +1,4 @@
-From 374e8fd76b011784a75f9c877a76f340cedcb1a0 Mon Sep 17 00:00:00 2001
+From c1a0ed25391dedfeea19608394c21bf72e18601b Mon Sep 17 00:00:00 2001
 From: "suricata.lu" <suricata.lu@gmail.com>
 Date: Mon, 20 Apr 2026 17:54:09 +0800
 Subject: [PATCH 2/3] Upstream driver code modifications
@@ -11,7 +11,7 @@ Upstream-Status: Inappropriate [embedded board port]
  3 files changed, 49 insertions(+)
 
 diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
-index 811a66062d32..884be9524e4c 100644
+index 033b83366893..45ae4d3508fe 100644
 --- a/drivers/net/ethernet/freescale/fec_main.c
 +++ b/drivers/net/ethernet/freescale/fec_main.c
 @@ -312,6 +312,24 @@ MODULE_PARM_DESC(macaddr, "FEC Ethernet MAC address");
@@ -39,7 +39,7 @@ index 811a66062d32..884be9524e4c 100644
  static struct bufdesc *fec_enet_get_nextdesc(struct bufdesc *bdp,
  					     struct bufdesc_prop *bd)
  {
-@@ -4599,6 +4617,10 @@ fec_probe(struct platform_device *pdev)
+@@ -4613,6 +4631,10 @@ fec_probe(struct platform_device *pdev)
  
  	ndev->max_mtu = PKT_MAXBUF_SIZE - ETH_HLEN - ETH_FCS_LEN;
  
@@ -51,10 +51,10 @@ index 811a66062d32..884be9524e4c 100644
  	if (ret)
  		goto failed_register;
 diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index fd1644c91eb2..53ae2919280d 100644
+index 6b15e3fb3684..d024026fd429 100644
 --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
 +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -7525,6 +7525,24 @@ static const struct xdp_metadata_ops stmmac_xdp_metadata_ops = {
+@@ -7662,6 +7662,24 @@ static const struct xdp_metadata_ops stmmac_xdp_metadata_ops = {
  	.xmo_rx_timestamp		= stmmac_xdp_rx_timestamp,
  };
  
@@ -79,7 +79,7 @@ index fd1644c91eb2..53ae2919280d 100644
  /**
   * stmmac_dvr_probe
   * @device: device pointer
-@@ -7819,6 +7837,10 @@ int stmmac_dvr_probe(struct device *device,
+@@ -7956,6 +7974,10 @@ int stmmac_dvr_probe(struct device *device,
  		goto error_phy_setup;
  	}
  
@@ -106,6 +106,3 @@ index 4120385c5a79..788b167d0a67 100644
  
  		/* If rgmii mode with no internal delay is selected, we do NOT use
  		 * aligned mode as one might expect.  Instead we use the PHY's default
--- 
-2.43.0
-
